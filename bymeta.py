@@ -95,11 +95,13 @@ def webhook():
         print("ERROR:", e)
         return "OK", 200
 
+
+  
     # =====================================
-    # START / MENU
+    # AUTO START FOR NEW USER
     # =====================================
 
-    if text in ["hi", "hello", "start", "menu"]:
+    if number not in users:
 
         users[number] = {
             "step": "option"
@@ -107,76 +109,114 @@ def webhook():
 
         send_message(
             number,
-            "👋 Welcome to Tech HubX Pvt. Ltd.\n\n"
+            "👋 Welcome to Balaji LNS IT Solutions\n\n"
             "Please choose an option:\n\n"
             "1️⃣ Digital Boards\n"
             "2️⃣ 4K PTZ Camera\n"
             "3️⃣ Full Studio\n"
             "4️⃣ Podcast Setup\n\n"
-            "👉 Reply with option number"
-        )
-
-        return "OK", 200
-
-    # =====================================
-    # CHECK USER
-    # =====================================
-
-    if number not in users:
-
-        send_message(
-            number,
-            "👋 Send *Hi* to start inquiry process."
+            "👉 Reply with option number or name"
         )
 
         return "OK", 200
 
     user = users[number]
 
+
     # =====================================
-    # OPTION
+    # BACK BUTTON
     # =====================================
 
-    if user["step"] == "option":
+    if text in ["back", "previous"]:
 
-        options = {
-            "1": "Digital Boards",
-            "2": "4K PTZ Camera",
-            "3": "Full Studio",
-            "4": "Podcast Setup"
-        }
+        # NAME -> OPTION
+        if user["step"] == "name":
 
-        if text not in options:
+            user["step"] = "option"
 
             send_message(
                 number,
-                "❌ Invalid option.\n\n"
-                "Please select:\n"
+                "🔙 Back to Options\n\n"
                 "1️⃣ Digital Boards\n"
                 "2️⃣ 4K PTZ Camera\n"
                 "3️⃣ Full Studio\n"
-                "4️⃣ Podcast Setup"
+                "4️⃣ Podcast Setup\n"
+                "👉 Type 'back' or 'previous' to go previous step"
             )
 
             return "OK", 200
 
-        user["service"] = options[text]
-        user["step"] = "name"
+        # LOCATION -> NAME
+        elif user["step"] == "location":
 
-        send_message(number, "👤 What is your name?")
+            user["step"] = "name"
 
-        return "OK", 200
+            send_message(
+                number,
+                "🔙 Enter your name again:\n"
+                "👉 Type 'back' or 'previous' to go previous step"
+            )
 
+            return "OK", 200
+
+        # BUDGET -> LOCATION
+        elif user["step"] == "budget":
+
+            user["step"] = "location"
+
+            send_message(
+                number,
+                "🔙 Enter your location again:\n"
+                "👉 Type 'back' or 'previous' to go previous step"
+            )
+
+            return "OK", 200
+
+        # BRAND -> BUDGET
+        elif user["step"] == "brand":
+
+            user["step"] = "budget"
+
+            send_message(
+                number,
+                "🔙 Enter your budget again:\n"
+                "👉 Type 'back' or 'previous' to go previous step"
+            )
+
+            return "OK", 200
+
+        # TIMELINE -> BRAND
+        elif user["step"] == "timeline":
+
+            user["step"] = "brand"
+
+            send_message(
+                number,
+                "🔙 Select Brand Again:\n\n"
+                "1️⃣ TechHub X\n"
+                "2️⃣ MaxHub\n"
+                "3️⃣ Teachmint X\n"
+            "👉 Type 'back' or 'previous' to go previous step"
+            )
+
+            return "OK", 200
+    # =====================================
+    # OPTION
+    # =====================================
+
+    @app.route("/webhook", methods=["POST"])
+    def webhook():
     # =====================================
     # NAME
     # =====================================
-
-    if user["step"] == "name":
+ 
+     if user["step"] == "name":
 
         user["name"] = text.title()
         user["step"] = "location"
 
-        send_message(number, "📍 Where are you located?")
+        send_message(number, "📍 Where are you located?\n"
+            "👉 Type 'back' or 'previous' to go previous step")
 
         return "OK", 200
 
@@ -189,7 +229,8 @@ def webhook():
         user["location"] = text.title()
         user["step"] = "budget"
 
-        send_message(number, "💰 What is your budget?")
+        send_message(number, "💰 What is your budget?\n"
+            "👉 Type 'back' or 'previous' to go previous step")
 
         return "OK", 200
 
@@ -207,7 +248,8 @@ def webhook():
             "🏷 Select Brand:\n\n"
             "1️⃣ TechHub X\n"
             "2️⃣ MaxHub\n"
-            "3️⃣ Teachmint X"
+            "3️⃣ Teachmint X\n"
+            "👉 Type 'back' or 'previous' to go previous step"
         )
 
         return "OK", 200
@@ -218,25 +260,47 @@ def webhook():
 
     if user["step"] == "brand":
 
-        brands = {
-            "1": "TechHub X",
-            "2": "MaxHub",
-            "3": "Teachmint X"
-        }
+        # TECHHUB X
+        if text in [
+            "1",
+            "techhub",
+            "tech hub",
+            "techhub x",
+            "techhubx",
+            "hub",
+            "tech",
+            "hubx"
+        ]:
 
-        if text not in brands:
+            user["brand"] = "TechHub X"
 
-            send_message(
-                number,
-                "❌ Invalid brand.\n\n"
-                "1️⃣ TechHub X\n"
-                "2️⃣ MaxHub\n"
-                "3️⃣ Teachmint X"
-            )
+        # MAXHUB
+        elif text in [
+            "2",
+            "maxhub",
+            "max hub",
+            "max"
+        ]:
 
-            return "OK", 200
+            user["brand"] = "MaxHub"
 
-        user["brand"] = brands[text]
+        # TEACHMINT X
+        elif text in [
+            "3",
+            "teachmint",
+            "teach mint",
+            "teachmint x",
+            "teachmintx"
+        ]:
+
+            user["brand"] = "Teachmint X"
+
+        # ANY OTHER BRAND
+        else:
+
+            user["brand"] = text.title()
+
+        # NEXT STEP
         user["step"] = "timeline"
 
         send_message(
@@ -245,7 +309,9 @@ def webhook():
             "1️⃣ 1-3 Days\n"
             "2️⃣ 4-7 Days\n"
             "3️⃣ 7-10 Days\n"
-            "4️⃣ 10+ Days"
+            "4️⃣ 10+ Days\n\n"
+            "👉 Or type your own timeline\n"
+            "👉 Type 'back' or 'previous' to go previous step"
         )
 
         return "OK", 200
@@ -271,7 +337,8 @@ def webhook():
                 "1️⃣ 1-3 Days\n"
                 "2️⃣ 4-7 Days\n"
                 "3️⃣ 7-10 Days\n"
-                "4️⃣ 10+ Days"
+                "4️⃣ 10+ Days\n"
+            "👉 Type 'back' or 'previous' to go previous step"
             )
 
             return "OK", 200
