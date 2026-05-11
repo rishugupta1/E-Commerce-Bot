@@ -1,3 +1,4 @@
+import requests
 from flask import Flask, request
 import requests
 import os
@@ -28,7 +29,26 @@ users = {}
 # =========================================
 # SAVE DATA TO GOOGLE SHEET
 # =========================================
+# =========================================
+# SAVE CHAT TO GOOGLE SHEET
+# =========================================
 
+def save_chat(number, user_message, bot_reply):
+
+    url = "https://script.google.com/macros/s/AKfycbyE7B2ituQ9v3BVcF7kd5DfKSN1lLTGMBcH-V1A0eISZ0maNUhi4GP8aEK7AJG2fjpE/exec"
+
+    data = {
+        "number": number,
+        "user_message": user_message,
+        "bot_reply": bot_reply
+    }
+
+    try:
+        response = requests.post(url, json=data)
+        print("GOOGLE SHEET RESPONSE:", response.text)
+
+    except Exception as e:
+        print("GOOGLE SHEET ERROR:", e)
 # =========================================
 # SEND MESSAGE
 # =========================================
@@ -399,7 +419,7 @@ def webhook():
         )
 
         send_message(number, summary)
-
+        save_chat(number, text, summary)
         # RESET COMPLETE USER
         del users[number]
 
