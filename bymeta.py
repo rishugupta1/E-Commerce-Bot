@@ -404,6 +404,7 @@ def webhook():
 
     if user["step"] == "timeline":
 
+        # AUTO CONVERT OPTIONS
         timelines = {
             "1": "1-3 Days",
             "2": "4-7 Days",
@@ -411,22 +412,15 @@ def webhook():
             "4": "10+ Days"
         }
 
-        if text not in timelines:
+        # IF USER SELECTS NUMBER
+        if text in timelines:
+            user["timeline"] = timelines[text]
 
-            send_message(
-                number,
-                "❌ Invalid timeline.\n\n"
-                "1️⃣ 1-3 Days\n"
-                "2️⃣ 4-7 Days\n"
-                "3️⃣ 7-10 Days\n"
-                "4️⃣ 10+ Days\n"
-            "👉 Type 'back' or 'previous' to go previous step"
-            )
+        # CUSTOM TIMELINE
+        else:
+            user["timeline"] = text.title()
 
-            return "OK", 200
-
-        user["timeline"] = timelines[text]
-
+        # SUMMARY
         summary = (
             "✅ Inquiry Submitted Successfully\n\n"
             f"📌 Service: {user['service']}\n"
@@ -440,12 +434,10 @@ def webhook():
 
         send_message(number, summary)
 
-            
+        # RESET USER
         users[number] = {
             "step": "option"
         }
-
-
 
         return "OK", 200
 
