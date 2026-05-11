@@ -1,36 +1,15 @@
-import gspread
-from oauth2client.service_account import ServiceAccountCredentials
-from datetime import datetime
 from flask import Flask, request
 import requests
 import os
-import json
+
 from dotenv import load_dotenv
 
 load_dotenv()
-print(os.getenv("GOOGLE_CREDENTIALS"))
+
 
 app = Flask(__name__)
 
-# =========================
-# GOOGLE SHEET CONNECTION
-# =========================
 
-scope = [
-    "https://spreadsheets.google.com/feeds",
-    "https://www.googleapis.com/auth/drive"
-]
-
-creds_dict = json.loads(os.getenv("GOOGLE_CREDENTIALS"))
-
-creds = ServiceAccountCredentials.from_json_keyfile_dict(
-    creds_dict,
-    scope
-)
-
-client = gspread.authorize(creds)
-
-sheet = client.open("Whatsapp E Commerce Leads Data").sheet1
 # =========================================
 # META WHATSAPP CONFIG
 # =========================================
@@ -50,22 +29,6 @@ users = {}
 # SAVE DATA TO GOOGLE SHEET
 # =========================================
 
-def save_to_sheet(number, service, name, location, budget, brand, timeline):
-
-    date = datetime.now().strftime("%d-%m-%Y %H:%M:%S")
-
-    data = [
-        number,
-        service,
-        name,
-        location,
-        budget,
-        brand,
-        timeline,
-        date
-    ]
-
-    sheet.append_row(data)
 # =========================================
 # SEND MESSAGE
 # =========================================
@@ -436,15 +399,7 @@ def webhook():
         )
 
         send_message(number, summary)
-        save_to_sheet(
-    number,
-    user["service"],
-    user["name"],
-    user["location"],
-    user["budget"],
-    user["brand"],
-    user["timeline"]
-)      
+
         # RESET COMPLETE USER
         del users[number]
 
