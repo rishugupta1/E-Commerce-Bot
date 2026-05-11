@@ -33,21 +33,30 @@ users = {}
 # SAVE CHAT TO GOOGLE SHEET
 # =========================================
 
-def save_chat(number, user_message, bot_reply):
+def save_chat(user):
 
     url = "https://script.google.com/macros/s/AKfycbyE7B2ituQ9v3BVcF7kd5DfKSN1lLTGMBcH-V1A0eISZ0maNUhi4GP8aEK7AJG2fjpE/exec"
 
     data = {
-        "number": number,
-        "user_message": user_message,
-        "bot_reply": bot_reply
+
+        "number": user.get("number", ""),
+        "requirement": user.get("service", ""),
+        "name": user.get("name", ""),
+        "location": user.get("location", ""),
+        "budget": user.get("budget", ""),
+        "brand": user.get("brand", ""),
+        "timeline": user.get("timeline", "")
+
     }
 
     try:
+
         response = requests.post(url, json=data)
+
         print("GOOGLE SHEET RESPONSE:", response.text)
 
     except Exception as e:
+
         print("GOOGLE SHEET ERROR:", e)
 # =========================================
 # SEND MESSAGE
@@ -405,7 +414,7 @@ def webhook():
         # CUSTOM TIMELINE
         else:
             user["timeline"] = text.title()
-
+        user["number"] = number
         # SUMMARY
         summary = (
             "✅ Inquiry Submitted Successfully\n\n"
@@ -419,7 +428,8 @@ def webhook():
         )
 
         send_message(number, summary)
-        save_chat(number, text, summary)
+        
+        save_chat(user)
         # RESET COMPLETE USER
         del users[number]
 
