@@ -434,10 +434,8 @@ def webhook():
 
         send_message(number, summary)
 
-        # RESET USER
-        users[number] = {
-            "step": "option"
-        }
+        # RESET COMPLETE USER
+        del users[number]
 
         return "OK", 200
 
