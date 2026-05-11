@@ -121,89 +121,49 @@ def webhook():
         return "OK", 200
 
     user = users[number]
-     # =====================================
-     # OPTION SELECTION
-     # =====================================
+    # =====================================
+    # OPTION SELECTION
+    # =====================================
 
     if user["step"] == "option":
 
         # DIGITAL BOARDS
-        if (
-            "digital" in text
-            or "board" in text
-            or "boards" in text
-            or text == "1"
-        ):
+        if text in ["1", "digital board", "board", "boards"]:
 
             user["service"] = "Digital Boards"
-            user["step"] = "name"
 
-            send_message(
-                number,
-                "✅ You selected Digital Boards.\n\n"
-                "👤 What is your name?\n"
-                "👉 Type 'back' or 'previous' to go previous step"
-            )
-
-            return "OK", 200
-
-        # 4K PTZ CAMERA
-        elif text in ["2", "ptz camera", "camera", "ptz"]:
+        # PTZ CAMERA
+        elif text in ["2", "camera", "ptz", "ptz camera"]:
 
             user["service"] = "PTZ Camera"
-            user["step"] = "name"
-
-            send_message(
-                number,
-                "✅ You selected PTZ Camera.\n\n"
-                "👤 What is your name?\n"
-                "👉 Type 'back' or 'previous' to go previous step"
-            )
-
-            return "OK", 200
 
         # FULL STUDIO
-        elif text in ["3", "full studio", "studio", "full setup"]:
+        elif text in ["3", "studio", "full studio"]:
 
             user["service"] = "Full Studio"
-            user["step"] = "name"
 
-            send_message(
-                number,
-                "✅ You selected Full Studio.\n\n"
-                "👤 What is your name?\n"
-                "👉 Type 'back' or 'previous' to go previous step"
-            )
-
-            return "OK", 200
-
-        # PODCAST SETUP
-        elif text in ["4", "podcast setup", "podcast", "setup"]:
+        # PODCAST
+        elif text in ["4", "podcast", "podcast setup"]:
 
             user["service"] = "Podcast Setup"
-            user["step"] = "name"
 
-            send_message(
-                number,
-                "✅ You selected Podcast Setup.\n\n"
-                "👤 What is your name?\n"
-                "👉 Type 'back' or 'previous' to go previous step"
-            )
-
-            return "OK", 200
-
+        # ANY OTHER MESSAGE
         else:
 
-            send_message(
-                number,
-                "❌ Please select correct option.\n\n"
-                "1️⃣ Digital Boards\n"
-                "2️⃣ 4K PTZ Camera\n"
-                "3️⃣ Full Studio\n"
-                "4️⃣ Podcast Setup"
-            )
+            # SAVE USER TEXT AS SERVICE
+            user["service"] = text.title()
 
-            return "OK", 200
+        # MOVE TO NEXT STEP
+        user["step"] = "name"
+
+        send_message(
+            number,
+            f"✅ You selected: {user['service']}\n\n"
+            "👤 What is your name?\n"
+            "👉 Type 'back' or 'previous' to go previous step"
+        )
+
+        return "OK", 200
     # =====================================
 
 
