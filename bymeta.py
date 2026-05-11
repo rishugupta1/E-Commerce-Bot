@@ -4,9 +4,11 @@ from datetime import datetime
 from flask import Flask, request
 import requests
 import os
+import json
 from dotenv import load_dotenv
 
 load_dotenv()
+print(os.getenv("GOOGLE_CREDENTIALS"))
 
 app = Flask(__name__)
 
@@ -19,8 +21,10 @@ scope = [
     "https://www.googleapis.com/auth/drive"
 ]
 
-creds = ServiceAccountCredentials.from_json_keyfile_name(
-    "credentials.json",
+creds_dict = json.loads(os.getenv("GOOGLE_CREDENTIALS"))
+
+creds = ServiceAccountCredentials.from_json_keyfile_dict(
+    creds_dict,
     scope
 )
 
